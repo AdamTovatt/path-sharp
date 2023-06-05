@@ -1,0 +1,5 @@
+.vs/
+PathSharp/bin/*
+PathSharp/obj/*
+PathSharpTests/bin/*
+PathSharpTests/obj/*
