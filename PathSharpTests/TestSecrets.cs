@@ -12,6 +12,7 @@ namespace PathSharpTests
         public string? OrchestratorAddress { get; set; }
         public string? ClientSecret { get; set; }
         public string? ClientId { get; set; }
+        public string? OrganizationUnitId { get; set; }
         public bool HasBeenSet { get; set; }
         public bool ShouldTestAgainstApi { get; set; }
 

@@ -3,7 +3,8 @@ namespace PathSharpTests
     [TestClass]
     public class ClientTests
     {
-        private TestSecrets secrets;
+        private TestSecrets? secrets;
+        private PathClient? client;
 
         public ClientTests()
         {
@@ -23,6 +24,9 @@ namespace PathSharpTests
                 TestSecrets.WriteEmpty();
                 throw new Exception("Error when reading test secrets. They should be in a text file called TestSecrets.txt in the same directory as this executable. An empty test secrets file has been created");
             }
+
+            if (secrets != null && secrets.OrchestratorAddress != null && secrets.OrganizationUnitId != null)
+                client = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId);
         }
 
         [TestMethod]
@@ -32,15 +36,36 @@ namespace PathSharpTests
             Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
             Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
             Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing organizationUnitId");
 
             if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
                 return;
 
-            PathClient pathClient = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress);
+            using (PathClient pathClient = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId))
+            {
+                await pathClient.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
-            await pathClient.Authorize(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+                Assert.IsNotNull(pathClient.Token);
+            }
+        }
 
-            Assert.IsNotNull(pathClient.Token);
+        [TestMethod]
+        public async Task GetJobs()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            await client.GetJobsAsync();
         }
     }
 }
