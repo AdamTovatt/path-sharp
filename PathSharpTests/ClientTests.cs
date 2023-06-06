@@ -1,3 +1,6 @@
+using PathSharp.Models.Dto;
+using PathSharp.Models.QueryParameters;
+
 namespace PathSharpTests
 {
     [TestClass]
@@ -65,7 +68,17 @@ namespace PathSharpTests
             if (!client.IsAuthorized)
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
-            await client.GetJobsAsync();
+            GetJobsParameters parameters = new GetJobsParameters()
+            {
+                Skip = 2,
+                Top = 10
+            };
+
+            List<Job>? jobs = await client.GetJobsAsync(parameters);
+
+            Assert.IsNotNull(jobs);
+            Assert.AreEqual(10, jobs.Count);
+            Assert.IsNotNull(jobs.First().CreationTime);
         }
     }
 }
