@@ -13,10 +13,11 @@ namespace PathSharpTests
         public string? ClientSecret { get; set; }
         public string? ClientId { get; set; }
         public bool HasBeenSet { get; set; }
+        public bool ShouldTestAgainstApi { get; set; }
 
         public static TestSecrets? Read()
         {
-            string json = File.ReadAllText("TestSecrets.txt");
+            string json = File.ReadAllText("TestSecrets.json");
 
             return JsonSerializer.Deserialize<TestSecrets>(json);
         }
@@ -24,7 +25,7 @@ namespace PathSharpTests
         public static void WriteEmpty()
         {
             string json = JsonSerializer.Serialize(new TestSecrets());
-            File.WriteAllText("TestSecrets.txt", JsonSerializer.Serialize(new TestSecrets()));
+            File.WriteAllText("TestSecrets.json", json);
         }
     }
 }
