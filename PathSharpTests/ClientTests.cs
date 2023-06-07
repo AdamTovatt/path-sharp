@@ -9,11 +9,11 @@ namespace PathSharpTests
         private TestSecrets? secrets;
         private PathClient? client;
 
-        public ClientTests()
+        public ClientTests() // this is the constructor, it will read the secrets file and create a client
         {
             try
             {
-                TestSecrets? readSecrets = TestSecrets.Read();
+                TestSecrets? readSecrets = TestSecrets.Read(); // the secrets are needed to test the requets against the api
 
                 if (readSecrets == null || !readSecrets.HasBeenSet) // hasBeenSet needs to be set to true in the secrets file so that we know that someone has used it
                 {
@@ -32,6 +32,10 @@ namespace PathSharpTests
                 client = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId);
         }
 
+        /// <summary>
+        /// Will test that the client can authorize against the api
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Authorize()
         {
@@ -52,6 +56,10 @@ namespace PathSharpTests
             }
         }
 
+        /// <summary>
+        /// Will test both that the client can get a list of jobs and that it can get a single job
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetJobs()
         {
@@ -79,6 +87,14 @@ namespace PathSharpTests
             Assert.IsNotNull(jobs);
             Assert.AreEqual(10, jobs.Count);
             Assert.IsNotNull(jobs.First().CreationTime);
+
+            Job? job = await client.GetJobAsync(jobs[2].Id);
+
+            Assert.IsNotNull(job);
+            Assert.IsNotNull(job.CreationTime);
+
+            Assert.AreEqual(jobs[2].Id, job.Id);
+            Assert.AreEqual(jobs[2].CreationTime, job.CreationTime);
         }
     }
 }

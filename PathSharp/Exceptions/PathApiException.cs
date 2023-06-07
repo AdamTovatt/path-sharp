@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace PathSharp.Exceptions
 {
-    public class PathException : Exception
+    public class PathApiException : Exception
     {
-        public PathException(string message) : base(message) { }
+        public PathApiException(string message) : base(message) { }
     }
 }
