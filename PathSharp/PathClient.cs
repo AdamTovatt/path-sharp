@@ -67,6 +67,12 @@ namespace PathSharp
                 throw new AuthorizeException($"The request returned status code 200 but the token contained empty values after deserializing the json: {tokenJson}");
         }
 
+        public async Task<List<Job>> StartJobsAsync(StartJobBody body)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Method for getting a list of jobs
         /// </summary>
