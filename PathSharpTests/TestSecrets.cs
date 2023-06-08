@@ -13,6 +13,9 @@ namespace PathSharpTests
         public string? ClientSecret { get; set; }
         public string? ClientId { get; set; }
         public string? OrganizationUnitId { get; set; }
+        public string? StartJobReleaseKey { get; set; }
+        public int? StartJobMachineSessionId { get; set; }
+        public int? StartJobRobotId { get; set; }
         public bool HasBeenSet { get; set; }
         public bool ShouldTestAgainstApi { get; set; }
 

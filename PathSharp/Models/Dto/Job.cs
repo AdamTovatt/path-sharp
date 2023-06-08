@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PathSharp.Models.Dto
 {
@@ -129,5 +130,13 @@ namespace PathSharp.Models.Dto
 
         [JsonPropertyName("Id")]
         public long Id { get; set; }
+
+        public static List<Job>? GetListFromJson(string json)
+        {
+            // the json from the api is wrapped in an object where there is a field called "value" which contains the actual json we want
+
+            JsonElement jsonValue = JsonDocument.Parse(json).RootElement.GetProperty("value"); // take out the json from the "value" field
+            return JsonSerializer.Deserialize<List<Job>>(jsonValue.GetRawText());
+        }
     }
 }

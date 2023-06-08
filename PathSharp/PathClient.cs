@@ -12,13 +12,25 @@ namespace PathSharp
 {
     public class PathClient : IDisposable
     {
+        /// <summary>
+        /// The default scope for the PathClient
+        /// </summary>
         public static readonly List<string> DefaultScope = new List<string> { "OR.Jobs" };
 
+        /// <summary>
+        /// The http client used for the requests
+        /// </summary>
         public HttpClient HttpClient { get { return httpClient; } set { httpClient = value; } }
         private HttpClient httpClient;
 
+        /// <summary>
+        /// Wether or not the client is authorized, call AuthorizeAsync to authorize the client
+        /// </summary>
         public bool IsAuthorized { get { return Token != null && !Token.IsExpired; } }
 
+        /// <summary>
+        /// The access token that the client has gotten from authorizing
+        /// </summary>
         public AccessToken? Token { get; set; }
 
         private string orchestratorAddress;
@@ -66,11 +78,45 @@ namespace PathSharp
             else if (Token.ContainsEmptyValues)
                 throw new AuthorizeException($"The request returned status code 200 but the token contained empty values after deserializing the json: {tokenJson}");
         }
-
-        public async Task<List<Job>> StartJobsAsync(StartJobBody body)
+        
+        /// <summary>
+        /// Will validate a dynamic job start. Called with the same body that would be used to start a job and will return errors with that body
+        /// </summary>
+        /// <param name="body">The start job body for starting a job</param>
+        /// <returns>Wether or not there were any errors with the start job body and information about those errors</returns>
+        /// <exception cref="PathApiException">The api did not return a success status code</exception>
+        public async Task<StartJobValidationResult?> ValidateDynamicJobAsync(StartJobBody body)
         {
-            await Task.CompletedTask;
-            throw new NotImplementedException();
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Post, RequestAddress.Jobs.ValidateDynamicJob);
+            requestMessage.Content = body.ToJsonBody();
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return StartJobValidationResult.FromJson(json);
+        }
+
+        /// <summary>
+        /// Will start one or many jobs
+        /// </summary>
+        /// <param name="body">The body containing the paramters for starting the job or jobs</param>
+        /// <returns>A list of jobs that were started</returns>
+        /// <exception cref="PathApiException">The api did not return a success status code</exception>
+        public async Task<List<Job>?> StartJobsAsync(StartJobBody body)
+        {
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Post, RequestAddress.Jobs.StartJobs);
+            requestMessage.Content = body.ToJsonBody();
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if(!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return Job.GetListFromJson(json);
         }
 
         /// <summary>
@@ -88,13 +134,7 @@ namespace PathSharp
                 throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
 
             string json = await responseMessage.Content.ReadAsStringAsync();
-
-            // the json from the api is wrapped in an object where there is a field called "value" which contains the actual json we want
-
-            JsonElement jsonValue = JsonDocument.Parse(json).RootElement.GetProperty("value"); // take out the json from the "value" field
-            List<Job>? jobs = JsonSerializer.Deserialize<List<Job>>(jsonValue.GetRawText());
-
-            return jobs;
+            return Job.GetListFromJson(json);
         }
 
         /// <summary>
@@ -132,7 +172,7 @@ namespace PathSharp
         /// <param name="queryParameters">If there are any additional query parameters</param>
         /// <returns></returns>
         /// <exception cref="AuthorizeException"></exception>
-        public HttpRequestMessage GetAuthorizedRequestMessage(HttpMethod httpMethod, string address, object? parameter = null, QueryParameterCollection? queryParameters = null)
+        public HttpRequestMessage GetAuthorizedRequestMessage(HttpMethod httpMethod, string address, QueryParameterCollection? queryParameters = null, object? parameter = null)
         {
             if (Token == null || Token.TokenType == null)
                 throw new AuthorizeException("Trying to create an authorized exception when the client is not authorized correctly. Maybe you have forgotten to call AuthorizeAsync()?");

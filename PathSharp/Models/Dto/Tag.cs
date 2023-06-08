@@ -10,15 +10,15 @@ namespace PathSharp.Models.Dto
     public class Tag
     {
         [JsonPropertyName("Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonPropertyName("DisplayName")]
-        public string DisplayName { get; set; }
+        public string? DisplayName { get; set; }
 
         [JsonPropertyName("Value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         [JsonPropertyName("DisplayValue")]
-        public string DisplayValue { get; set; }
+        public string? DisplayValue { get; set; }
     }
 }
