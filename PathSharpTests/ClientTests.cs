@@ -54,6 +54,7 @@ namespace PathSharpTests
                 await pathClient.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
                 Assert.IsNotNull(pathClient.Token);
+                Assert.IsTrue(pathClient.IsAuthorized);
             }
         }
 
