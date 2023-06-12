@@ -83,3 +83,10 @@ You can create an issue or a pull request if you want to contribute.
 
 ### License
 This project is licensed under the MIT license. See the LICENSE file for more info.
+
+### Contributing
+
+#### Tests
+To run the tests you should edit the TestSecrets.json file that will be created in the same directory as the built assembly. The path to the test secrets file is probably PathSharpTests/bin/Debug/net6.0/TestSecrets.json.
+
+The orchestrator url should start with a / but not end with one.

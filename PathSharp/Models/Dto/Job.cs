@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using PathSharp.Helpers;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace PathSharp.Models.Dto
@@ -133,10 +134,8 @@ namespace PathSharp.Models.Dto
 
         public static List<Job>? GetListFromJson(string json)
         {
-            // the json from the api is wrapped in an object where there is a field called "value" which contains the actual json we want
-
-            JsonElement jsonValue = JsonDocument.Parse(json).RootElement.GetProperty("value"); // take out the json from the "value" field
-            return JsonSerializer.Deserialize<List<Job>>(jsonValue.GetRawText());
+            // the json from the api is wrapped in an object where there is a field called "value" which contains the actual json we want        
+            return JsonSerializer.Deserialize<List<Job>>(json.GetJsonProperty("value"));
         }
     }
 }

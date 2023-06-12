@@ -23,14 +23,18 @@ namespace PathSharpTests
 
                 secrets = readSecrets;
             }
-            catch
+            catch (Exception exception)
             {
-                TestSecrets.WriteEmpty();
+                if (exception.GetType() == typeof(FileNotFoundException))
+                    TestSecrets.WriteEmpty();
+
                 throw new Exception("Error when reading test secrets. They should be in a text file called TestSecrets.txt in the same directory as this executable. An empty test secrets file has been created");
             }
 
             if (secrets != null && secrets.OrchestratorAddress != null && secrets.OrganizationUnitId != null)
                 client = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId);
+            else
+                throw new Exception("Did not create new client because one of the required values were missing");
         }
 
         /// <summary>
@@ -125,6 +129,25 @@ namespace PathSharpTests
             Assert.IsTrue(validationResult.IsValid);
             Assert.IsNotNull(validationResult.Errors);
             Assert.AreEqual(0, validationResult.Errors.Count);
+        }
+
+        [TestMethod]
+        public async Task GetFolders()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Folder>? folders = await client.GetFoldersAsync();
         }
     }
 }

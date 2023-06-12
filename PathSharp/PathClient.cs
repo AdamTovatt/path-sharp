@@ -15,7 +15,7 @@ namespace PathSharp
         /// <summary>
         /// The default scope for the PathClient
         /// </summary>
-        public static readonly List<string> DefaultScope = new List<string> { "OR.Jobs" };
+        public static readonly List<string> DefaultScope = new List<string> { "OR.Jobs", "OR.Folders.Read", "OR.Execution.Read", "OR.Robots.Read" };
 
         /// <summary>
         /// The http client used for the requests
@@ -155,6 +155,17 @@ namespace PathSharp
             return JsonSerializer.Deserialize<Job>(await responseMessage.Content.ReadAsStringAsync());
         }
 
+        public async Task<List<Folder>?> GetFoldersAsync()
+        {
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Folders.Get);
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            return Folder.GetListFromJson(await responseMessage.Content.ReadAsStringAsync());
+        }
+
         /// <summary>
         /// Will dispose the underlying http client
         /// </summary>
@@ -184,7 +195,7 @@ namespace PathSharp
 
             HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue(Token.TokenType, Token.Value);
-            requestMessage.Headers.Add("x-uipath-organizationunitid", organisationUnit);
+            //requestMessage.Headers.Add("x-uipath-organizationunitid", organisationUnit);
 
             return requestMessage;
         }

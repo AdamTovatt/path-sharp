@@ -31,5 +31,10 @@ namespace PathSharp
             public const string StopJobs = "/odata/Jobs/UiPath.Server.Configuration.OData.StopJobs";
             public const string ValidateDynamicJob = "/odata/Jobs/UiPath.Server.Configuration.OData.ValidateDynamicJob";
         }
+
+        public class Folders
+        {
+            public const string Get = "/odata/Folders";
+        }
     }
 }
