@@ -51,5 +51,10 @@ namespace PathSharp.Models.Dto
         {
             return JsonSerializer.Deserialize<List<Folder>>(json.GetJsonProperty("value"));
         }
+
+        public override string ToString()
+        {
+            return DisplayName ?? FullyQualifiedName ?? Id.ToString();
+        }
     }
 }

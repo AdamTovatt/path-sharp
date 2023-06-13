@@ -1,4 +1,6 @@
-﻿using PathSharp.Exceptions;
+﻿using PathSharp.Constants;
+using PathSharp.Exceptions;
+using PathSharp.Helpers;
 using PathSharp.Models.Dto;
 using PathSharp.Models.Path;
 using PathSharp.Models.QueryParameters;
@@ -34,20 +36,17 @@ namespace PathSharp
         public AccessToken? Token { get; set; }
 
         private string orchestratorAddress;
-        private string organisationUnit;
 
         /// <summary>
         /// Constructor for the path client
         /// </summary>
         /// <param name="baseAdress">The base address to use, should be the domain to make requests to. Use the default value: RequestAddress.Base.Default if you are not sure what to use</param>
         /// <param name="orchestratorAddress">The orchestrator address is the part between the base address and the method specific addresses, it contains some sort of key and a name for the environment followed by "/orchestrator_"</param>
-        /// <param name="organizationUnit">The organization unit to pass in the X-UIPATH-OrganizationUnitId header in the requests</param>
-        public PathClient(string baseAdress, string orchestratorAddress, string organizationUnit)
+        public PathClient(string baseAdress, string orchestratorAddress)
         {
             httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(baseAdress);
             this.orchestratorAddress = orchestratorAddress;
-            this.organisationUnit = organizationUnit;
         }
 
         /// <summary>
@@ -125,9 +124,11 @@ namespace PathSharp
         /// <param name="parameters">The optional parameters to use when getting the jobs</param>
         /// <returns>A list of jobs</returns>
         /// <exception cref="PathApiException">The api did not return a success status code</exception>
-        public async Task<List<Job>?> GetJobsAsync(GetJobsParameters? parameters = null)
+        public async Task<List<Job>?> GetJobsAsync(string organizationUnitId, GetJobsParameters? parameters = null)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Jobs.Get, queryParameters: parameters);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+            
             HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
 
             if (!responseMessage.IsSuccessStatusCode)
@@ -195,7 +196,6 @@ namespace PathSharp
 
             HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, url);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue(Token.TokenType, Token.Value);
-            //requestMessage.Headers.Add("x-uipath-organizationunitid", organisationUnit);
 
             return requestMessage;
         }

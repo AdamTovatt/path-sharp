@@ -10,10 +10,10 @@ namespace PathSharp.Models.Dto
         public Guid Key { get; set; }
 
         [JsonPropertyName("StartTime")]
-        public DateTimeOffset StartTime { get; set; }
+        public DateTimeOffset? StartTime { get; set; }
 
         [JsonPropertyName("EndTime")]
-        public DateTimeOffset EndTime { get; set; }
+        public DateTimeOffset? EndTime { get; set; }
 
         [JsonPropertyName("State")]
         public string? State { get; set; }

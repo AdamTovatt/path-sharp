@@ -1,3 +1,4 @@
+using PathSharp.Constants;
 using PathSharp.Models.Dto;
 using PathSharp.Models.QueryParameters;
 using PathSharp.Models.RequestBodies;
@@ -32,7 +33,7 @@ namespace PathSharpTests
             }
 
             if (secrets != null && secrets.OrchestratorAddress != null && secrets.OrganizationUnitId != null)
-                client = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId);
+                client = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress);
             else
                 throw new Exception("Did not create new client because one of the required values were missing");
         }
@@ -53,7 +54,7 @@ namespace PathSharpTests
             if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
                 return;
 
-            using (PathClient pathClient = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress, secrets.OrganizationUnitId))
+            using (PathClient pathClient = new PathClient(RequestAddress.Base.Default, secrets.OrchestratorAddress))
             {
                 await pathClient.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
@@ -73,6 +74,7 @@ namespace PathSharpTests
             Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
             Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
             Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing OrganizationUnitId, it is needed for running the get jobs test");
 
             if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
                 return;
@@ -88,7 +90,7 @@ namespace PathSharpTests
                 Top = 10
             };
 
-            List<Job>? jobs = await client.GetJobsAsync(parameters);
+            List<Job>? jobs = await client.GetJobsAsync(secrets.OrganizationUnitId, parameters);
 
             Assert.IsNotNull(jobs);
             Assert.AreEqual(10, jobs.Count);
@@ -148,6 +150,9 @@ namespace PathSharpTests
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
             List<Folder>? folders = await client.GetFoldersAsync();
+
+            Assert.IsNotNull(folders);
+            Assert.IsTrue(folders.Count > 0);
         }
     }
 }

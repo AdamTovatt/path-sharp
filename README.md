@@ -89,4 +89,6 @@ This project is licensed under the MIT license. See the LICENSE file for more in
 #### Tests
 To run the tests you should edit the TestSecrets.json file that will be created in the same directory as the built assembly. The path to the test secrets file is probably PathSharpTests/bin/Debug/net6.0/TestSecrets.json.
 
-The orchestrator url should start with a / but not end with one.
+The orchestrator url should not start nor end with a "/".
+
+The OrganizationUnitId in test secrets should be the id of a folder that contains jobs. Folders can be gotten with the GetFoldersAsync() method in client.
