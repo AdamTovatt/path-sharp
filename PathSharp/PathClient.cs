@@ -17,7 +17,7 @@ namespace PathSharp
         /// <summary>
         /// The default scope for the PathClient
         /// </summary>
-        public static readonly List<string> DefaultScope = new List<string> { "OR.Jobs", "OR.Folders.Read", "OR.Execution.Read", "OR.Robots.Read" };
+        public static readonly List<string> DefaultScope = new List<string> { "OR.Jobs", "OR.Folders.Read", "OR.Execution.Read", "OR.Robots.Read", "OR.Machines.Read" };
 
         /// <summary>
         /// The http client used for the requests
@@ -124,7 +124,7 @@ namespace PathSharp
         /// <param name="parameters">The optional parameters to use when getting the jobs</param>
         /// <returns>A list of jobs</returns>
         /// <exception cref="PathApiException">The api did not return a success status code</exception>
-        public async Task<List<Job>?> GetJobsAsync(string organizationUnitId, GetJobsParameters? parameters = null)
+        public async Task<List<Job>?> GetJobsAsync(string organizationUnitId, ODataParameters? parameters = null)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Jobs.Get, queryParameters: parameters);
             requestMessage.AddOrganizationUnitId(organizationUnitId);

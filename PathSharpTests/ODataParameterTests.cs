@@ -33,8 +33,9 @@ namespace PathSharpTests
             parameters.AddFilterToken(new ParenthesisParameterToken(PathSharp.Models.Enums.ParenthesisType.Start));
             parameters.AddFilterToken(new StringParameterToken("ReleaseName", "Bot", true));
             parameters.AddFilterToken(new ParenthesisParameterToken(PathSharp.Models.Enums.ParenthesisType.End));
+            parameters.Skip = 1;
 
-            Assert.AreEqual("$filter=not%28SpecificPriorityValue%20eq%2046%29and%28contains%28ReleaseName%2C%27Bot%27%29%29", parameters.ToString());
+            Assert.AreEqual("$filter=not%28SpecificPriorityValue%20eq%2046%29and%28contains%28ReleaseName%2C%27Bot%27%29%29&$skip=1", parameters.ToString());
         }
     }
 }

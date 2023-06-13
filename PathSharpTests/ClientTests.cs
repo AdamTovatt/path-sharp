@@ -84,7 +84,7 @@ namespace PathSharpTests
             if (!client.IsAuthorized)
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
-            GetJobsParameters parameters = new GetJobsParameters()
+            ODataParameters parameters = new ODataParameters()
             {
                 Skip = 2,
                 Top = 10
