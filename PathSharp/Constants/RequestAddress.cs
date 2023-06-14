@@ -36,5 +36,16 @@ namespace PathSharp.Constants
         {
             public const string Get = "/odata/Folders";
         }
+
+        public class Robots
+        {
+            public const string Get = "/odata/Robots";
+            public const string FindAll = "/odata/Robots/UiPath.Server.Configuration.OData.FindAllAcrossFolders";
+        }
+
+        public class Machines
+        {
+            public const string Get = "/odata/Machines";
+        }
     }
 }

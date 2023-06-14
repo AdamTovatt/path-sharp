@@ -106,6 +106,73 @@ namespace PathSharpTests
         }
 
         [TestMethod]
+        public async Task GetMachines()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Machine>? machines = await client.GetMachinesAsync();
+
+            Assert.IsNotNull(machines);
+            Assert.IsTrue(machines.Count > 0);
+        }
+
+        [TestMethod]
+        public async Task GetAllRobots()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing OrganizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Robot>? robots = await client.GetAllRobotsAsync(secrets.OrganizationUnitId);
+
+            Assert.IsNotNull(robots);
+            Assert.IsTrue(robots.Count > 0);
+        }
+
+        [TestMethod]
+        public async Task GetRobots()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing OrganizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Robot>? robots = await client.GetRobotsAsync(secrets.OrganizationUnitId);
+
+            Assert.IsNotNull(robots);
+        }
+
+        [TestMethod]
         public async Task ValidateDynamicJob()
         {
             Assert.IsNotNull(secrets, "Secrets have been read the wrong way");

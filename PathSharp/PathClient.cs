@@ -156,6 +156,65 @@ namespace PathSharp
             return JsonSerializer.Deserialize<Job>(await responseMessage.Content.ReadAsStringAsync());
         }
 
+        public async Task<List<Machine>?> GetMachinesAsync(ODataParameters? parameters = null)
+        {
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Machines.Get, parameters);
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Machine>?>(json.GetJsonProperty("value"));
+        }
+
+        /// <summary>
+        /// Will get all robots
+        /// </summary>
+        /// <param name="parameters">Optional parameters for the request</param>
+        /// <returns>A list of robots</returns>
+        /// <exception cref="PathApiException"></exception>
+        public async Task<List<Robot>?> GetAllRobotsAsync(string organizationUnitId, ODataParameters? parameters = null)
+        {
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Robots.Get, parameters);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Robot>?>(json.GetJsonProperty("value"));
+        }
+
+        /// <summary>
+        /// Will get all robots in a folder with the given organizationUnitId
+        /// </summary>
+        /// <param name="organizationUnitId">The id of the folder to get the robots in. The id of a folder and organizationUnitId seems to be the same thing</param>
+        /// <param name="parameters">Optional parameters for the request</param>
+        /// <returns>A list with robots</returns>
+        /// <exception cref="PathApiException"></exception>
+        public async Task<List<Robot>?> GetRobotsAsync(string organizationUnitId, ODataParameters? parameters = null)
+        {
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Robots.Get, parameters);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Robot>?>(json.GetJsonProperty("value"));
+        }
+
+        /// <summary>
+        /// Will get all folders. A folder id is needed in many requests as the header "x-uipath-organizationunitid".
+        /// </summary>
+        /// <returns>A list of folders</returns>
+        /// <exception cref="PathApiException"></exception>
         public async Task<List<Folder>?> GetFoldersAsync()
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Folders.Get);
