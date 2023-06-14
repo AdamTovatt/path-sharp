@@ -175,10 +175,9 @@ namespace PathSharp
         /// <param name="parameters">Optional parameters for the request</param>
         /// <returns>A list of robots</returns>
         /// <exception cref="PathApiException"></exception>
-        public async Task<List<Robot>?> GetAllRobotsAsync(string organizationUnitId, ODataParameters? parameters = null)
+        public async Task<List<Robot>?> GetAllRobotsAsync(ODataParameters? parameters = null)
         {
-            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Robots.Get, parameters);
-            requestMessage.AddOrganizationUnitId(organizationUnitId);
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Robots.FindAll, parameters);
 
             HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
 

@@ -16,7 +16,7 @@ namespace PathSharp.Models.Dto
         public string? MachineName { get; set; }
 
         [JsonPropertyName("MachineId")]
-        public long MachineId { get; set; }
+        public long? MachineId { get; set; }
 
         [JsonPropertyName("Name")]
         public string? Name { get; set; }
@@ -43,7 +43,7 @@ namespace PathSharp.Models.Dto
         public string? Password { get; set; }
 
         [JsonPropertyName("CredentialStoreId")]
-        public long CredentialStoreId { get; set; }
+        public long? CredentialStoreId { get; set; }
 
         [JsonPropertyName("UserId")]
         public long UserId { get; set; }
@@ -70,10 +70,10 @@ namespace PathSharp.Models.Dto
         public bool LimitConcurrentExecution { get; set; }
 
         [JsonPropertyName("LastModificationTime")]
-        public DateTimeOffset LastModificationTime { get; set; }
+        public DateTimeOffset? LastModificationTime { get; set; }
 
         [JsonPropertyName("LastModifierUserId")]
-        public long LastModifierUserId { get; set; }
+        public long? LastModifierUserId { get; set; }
 
         [JsonPropertyName("CreationTime")]
         public DateTimeOffset CreationTime { get; set; }

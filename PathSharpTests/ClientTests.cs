@@ -144,7 +144,7 @@ namespace PathSharpTests
             if (!client.IsAuthorized)
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
-            List<Robot>? robots = await client.GetAllRobotsAsync(secrets.OrganizationUnitId);
+            List<Robot>? robots = await client.GetAllRobotsAsync();
 
             Assert.IsNotNull(robots);
             Assert.IsTrue(robots.Count > 0);
