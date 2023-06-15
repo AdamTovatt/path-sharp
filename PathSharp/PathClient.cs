@@ -84,9 +84,10 @@ namespace PathSharp
         /// <param name="body">The start job body for starting a job</param>
         /// <returns>Wether or not there were any errors with the start job body and information about those errors</returns>
         /// <exception cref="PathApiException">The api did not return a success status code</exception>
-        public async Task<StartJobValidationResult?> ValidateDynamicJobAsync(StartJobBody body)
+        public async Task<StartJobValidationResult?> ValidateDynamicJobAsync(string organizationUnitId, StartJobBody body)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Post, RequestAddress.Jobs.ValidateDynamicJob);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
             requestMessage.Content = body.ToJsonBody();
 
             HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
@@ -104,9 +105,10 @@ namespace PathSharp
         /// <param name="body">The body containing the paramters for starting the job or jobs</param>
         /// <returns>A list of jobs that were started</returns>
         /// <exception cref="PathApiException">The api did not return a success status code</exception>
-        public async Task<List<Job>?> StartJobsAsync(StartJobBody body)
+        public async Task<List<Job>?> StartJobsAsync(string organizationUnitId, StartJobBody body)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Post, RequestAddress.Jobs.StartJobs);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
             requestMessage.Content = body.ToJsonBody();
 
             HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
@@ -207,6 +209,24 @@ namespace PathSharp
 
             string json = await responseMessage.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<Robot>?>(json.GetJsonProperty("value"));
+        }
+
+        public async Task<List<Session>?> GetSessionsAsync(string organizationUnitId, ODataParameters? parameters = null)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Release>?> GetReleasesAsync(string organizationUnitId, ODataParameters? parameters  = null)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Process>?> GetProcessesAsync(string organizationUnitId, ODataParameters? parameters = null)
+        {
+            await Task.CompletedTask;
+            throw new NotImplementedException();
         }
 
         /// <summary>

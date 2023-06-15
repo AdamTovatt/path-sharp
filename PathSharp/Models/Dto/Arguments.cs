@@ -9,8 +9,11 @@ namespace PathSharp.Models.Dto
 {
     public class Arguments
     {
+        [JsonIgnore]
+        public InputArgumentSpecification Input { get {}
+
         [JsonPropertyName("Input")]
-        public string? Input { get; set; }
+        public string? RawInput { get; set; }
 
         [JsonPropertyName("Output")]
         public string? Output { get; set; }

@@ -2,6 +2,7 @@ using PathSharp.Constants;
 using PathSharp.Models.Dto;
 using PathSharp.Models.QueryParameters;
 using PathSharp.Models.RequestBodies;
+using static PathSharp.Constants.RequestAddress;
 
 namespace PathSharpTests
 {
@@ -29,7 +30,7 @@ namespace PathSharpTests
                 if (exception.GetType() == typeof(FileNotFoundException))
                     TestSecrets.WriteEmpty();
 
-                throw new Exception("Error when reading test secrets. They should be in a text file called TestSecrets.txt in the same directory as this executable. An empty test secrets file has been created");
+                throw new Exception("Error when reading test secrets. They should be in a text file called TestSecrets.txt in the same directory as this executable");
             }
 
             if (secrets != null && secrets.OrchestratorAddress != null && secrets.OrganizationUnitId != null)
@@ -106,6 +107,52 @@ namespace PathSharpTests
         }
 
         [TestMethod]
+        public async Task GetReleases()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing organizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Release>? releases = await client.GetReleasesAsync(secrets.OrganizationUnitId);
+
+            Assert.IsNotNull(releases);
+            Assert.IsTrue(releases.Count > 0);
+        }
+
+        [TestMethod]
+        public async Task GetProcesses()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing organizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            List<Process>? processes = await client.GetProcessesAsync(secrets.OrganizationUnitId);
+
+            Assert.IsNotNull(processes);
+            Assert.IsTrue(processes.Count > 0);
+        }
+
+        [TestMethod]
         public async Task GetMachines()
         {
             Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
@@ -173,7 +220,7 @@ namespace PathSharpTests
         }
 
         [TestMethod]
-        public async Task ValidateDynamicJob()
+        public async Task StartJob()
         {
             Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
             Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
@@ -182,6 +229,7 @@ namespace PathSharpTests
             Assert.IsNotNull(secrets.StartJobReleaseKey, "Secrets are missing startJobReleaseKey, should be a release key of a job to start in the start job tests");
             Assert.IsNotNull(secrets.StartJobMachineSessionId, "Secrets are missing startJobMachineSessionId, should be machine session id to use with start job tests");
             Assert.IsNotNull(secrets.StartJobRobotId, "Secrets are missing startJobRobotId, should be a robot id to use with start job tests");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "OrganizationUnitId is missing from secrets");
 
             if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
                 return;
@@ -192,7 +240,33 @@ namespace PathSharpTests
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
             StartJobBody startJobBody = new StartJobBody(secrets.StartJobReleaseKey, secrets.StartJobMachineSessionId.Value, secrets.StartJobRobotId.Value);
-            StartJobValidationResult? validationResult = await client.ValidateDynamicJobAsync(startJobBody);
+            List<Job>? startedJobs = await client.StartJobsAsync(secrets.OrganizationUnitId, startJobBody);
+
+            Assert.IsNotNull(startedJobs);
+        }
+
+        [TestMethod]
+        public async Task ValidateDynamicJob()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.StartJobReleaseKey, "Secrets are missing startJobReleaseKey, should be a release key of a job to start in the start job tests");
+            Assert.IsNotNull(secrets.StartJobMachineSessionId, "Secrets are missing startJobMachineSessionId, should be machine session id to use with start job tests");
+            Assert.IsNotNull(secrets.StartJobRobotId, "Secrets are missing startJobRobotId, should be a robot id to use with start job tests");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "OrganizationUnitId is missing from secrets");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            StartJobBody startJobBody = new StartJobBody(secrets.StartJobReleaseKey, secrets.StartJobMachineSessionId.Value, secrets.StartJobRobotId.Value);
+            StartJobValidationResult? validationResult = await client.ValidateDynamicJobAsync(secrets.OrganizationUnitId, startJobBody);
 
             Assert.IsNotNull(validationResult);
             Assert.IsTrue(validationResult.IsValid);

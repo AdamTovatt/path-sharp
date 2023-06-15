@@ -47,5 +47,20 @@ namespace PathSharp.Constants
         {
             public const string Get = "/odata/Machines";
         }
+
+        public class Processes
+        {
+            public const string Get = "/odata/Processes";
+        }
+
+        public class Releases
+        {
+            public const string Get = "/odata/Releases";
+        }
+
+        public class Sessions
+        {
+            public const string GetMachineSessions = "/odata/Sessions/UiPath.Server.Configuration.OData.GetMachineSessions(key={0})";
+        }
     }
 }
