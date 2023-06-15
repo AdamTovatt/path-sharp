@@ -31,7 +31,7 @@ namespace PathSharp.Models.Dto
         public string? Name { get; set; }
 
         [JsonPropertyName("EnvironmentId")]
-        public long EnvironmentId { get; set; }
+        public long? EnvironmentId { get; set; }
 
         [JsonPropertyName("EnvironmentName")]
         public string? EnvironmentName { get; set; }
@@ -58,10 +58,10 @@ namespace PathSharp.Models.Dto
         public bool RequiresUserInteraction { get; set; }
 
         [JsonPropertyName("IsAttended")]
-        public bool IsAttended { get; set; }
+        public bool? IsAttended { get; set; }
 
         [JsonPropertyName("IsCompiled")]
-        public bool IsCompiled { get; set; }
+        public bool? IsCompiled { get; set; }
 
         [JsonPropertyName("AutomationHubIdeaUrl")]
         public string? AutomationHubIdeaUrl { get; set; }
@@ -112,10 +112,10 @@ namespace PathSharp.Models.Dto
         public string? RemoteControlAccess { get; set; }
 
         [JsonPropertyName("LastModificationTime")]
-        public DateTimeOffset LastModificationTime { get; set; }
+        public DateTimeOffset? LastModificationTime { get; set; }
 
         [JsonPropertyName("LastModifierUserId")]
-        public long LastModifierUserId { get; set; }
+        public long? LastModifierUserId { get; set; }
 
         [JsonPropertyName("CreationTime")]
         public DateTimeOffset CreationTime { get; set; }

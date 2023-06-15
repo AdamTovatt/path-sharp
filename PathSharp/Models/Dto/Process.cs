@@ -25,7 +25,7 @@ namespace PathSharp.Models.Dto
         public bool RequiresUserInteraction { get; set; }
 
         [JsonPropertyName("IsAttended")]
-        public bool IsAttended { get; set; }
+        public bool? IsAttended { get; set; }
 
         [JsonPropertyName("TargetFramework")]
         public string? TargetFramework { get; set; }

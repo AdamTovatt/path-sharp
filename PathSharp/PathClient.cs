@@ -158,6 +158,12 @@ namespace PathSharp
             return JsonSerializer.Deserialize<Job>(await responseMessage.Content.ReadAsStringAsync());
         }
 
+        /// <summary>
+        /// Will get machines
+        /// </summary>
+        /// <param name="parameters">Optional parameters</param>
+        /// <returns>A list of machines</returns>
+        /// <exception cref="PathApiException"></exception>
         public async Task<List<Machine>?> GetMachinesAsync(ODataParameters? parameters = null)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Machines.Get, parameters);
@@ -211,22 +217,68 @@ namespace PathSharp
             return JsonSerializer.Deserialize<List<Robot>?>(json.GetJsonProperty("value"));
         }
 
-        public async Task<List<Session>?> GetSessionsAsync(string organizationUnitId, ODataParameters? parameters = null)
+        /// <summary>
+        /// Will get sessions for a specific machine
+        /// </summary>
+        /// <param name="organizationUnitId">The organizationUnitId to use. This is the same as an id from a folder but as a string</param>
+        /// <param name="machineId"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        /// <exception cref="PathApiException"></exception>
+        public async Task<List<Session>?> GetSessionsByMachineIdAsync(string organizationUnitId, long machineId, ODataParameters? parameters = null)
         {
-            await Task.CompletedTask;
-            throw new NotImplementedException();
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Sessions.GetMachineSessions, null, machineId);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+
+            HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Session>?>(json.GetJsonProperty("value"));
         }
 
+        /// <summary>
+        /// Will get all releases
+        /// </summary>
+        /// <param name="organizationUnitId">The organinzationUnitId to use. This is the same as an id from a folder but as a string</param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        /// <exception cref="PathApiException"></exception>
         public async Task<List<Release>?> GetReleasesAsync(string organizationUnitId, ODataParameters? parameters  = null)
         {
-            await Task.CompletedTask;
-            throw new NotImplementedException();
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Releases.Get, queryParameters: parameters);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+
+            HttpResponseMessage responseMessage = await HttpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Release>?>(json.GetJsonProperty("value"));
         }
 
+        /// <summary>
+        /// Will get all processes
+        /// </summary>
+        /// <param name="organizationUnitId">The organinzationUnitId to use. This is the same as an id from a folder but as a string</param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        /// <exception cref="PathApiException"></exception>
         public async Task<List<Process>?> GetProcessesAsync(string organizationUnitId, ODataParameters? parameters = null)
         {
-            await Task.CompletedTask;
-            throw new NotImplementedException();
+            HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Processes.Get, queryParameters: parameters);
+            requestMessage.AddOrganizationUnitId(organizationUnitId);
+
+            HttpResponseMessage responseMessage = await HttpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
+                throw new PathApiException(await responseMessage.Content.ReadAsStringAsync());
+
+            string json = await responseMessage.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Process>?>(json.GetJsonProperty("value"));
         }
 
         /// <summary>

@@ -175,6 +175,43 @@ namespace PathSharpTests
         }
 
         [TestMethod]
+        public async Task GetSessions()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing organizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            ODataParameters parameters = new ODataParameters();
+            parameters.AddFilterToken(new StringParameterToken("Name", "S-VIP-CLI02", false));
+
+            List<Machine>? machines = await client.GetMachinesAsync(parameters);
+
+            Assert.IsNotNull(machines);
+            Assert.IsTrue(machines.Count > 0);
+
+            Machine machine = machines[0];
+
+            Assert.IsNotNull(machine);
+            Assert.IsNotNull(machine.Id);
+            Assert.IsTrue(machine.Id > 0);
+
+            List<Session>? sessions = await client.GetSessionsByMachineIdAsync(secrets.OrganizationUnitId, machine.Id);
+
+            Assert.IsNotNull(sessions);
+            Assert.IsTrue(sessions.Count > 0);
+        }
+
+        [TestMethod]
         public async Task GetAllRobots()
         {
             Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
@@ -240,6 +277,10 @@ namespace PathSharpTests
                 await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
 
             StartJobBody startJobBody = new StartJobBody(secrets.StartJobReleaseKey, secrets.StartJobMachineSessionId.Value, secrets.StartJobRobotId.Value);
+
+            startJobBody.AddRunTimeArgument("in_InputText", $"Test text from C# PathClienTests, the current utc time is: {DateTime.UtcNow}");
+            startJobBody.AddRunTimeArgument("in_MailAdress", "adam@sakur.se");
+
             List<Job>? startedJobs = await client.StartJobsAsync(secrets.OrganizationUnitId, startJobBody);
 
             Assert.IsNotNull(startedJobs);
