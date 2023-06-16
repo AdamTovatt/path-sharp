@@ -11,8 +11,8 @@ namespace PathSharp.Models.Dto
     public class Arguments
     {
         [JsonIgnore]
-        public InputArgumentSpecification? Input { get { if (input == null) DeserializeRawInput(); return input; } }
-        private InputArgumentSpecification? input;
+        public List<InputArgumentSpecification>? Input { get { if (input == null) DeserializeRawInput(); return input; } }
+        private List<InputArgumentSpecification>? input;
 
         [JsonPropertyName("Input")]
         public string? RawInput { get; set; }
@@ -25,7 +25,7 @@ namespace PathSharp.Models.Dto
             if (string.IsNullOrEmpty(RawInput))
                 return;
 
-            input = JsonSerializer.Deserialize<InputArgumentSpecification>(RawInput);
+            input = InputArgumentSpecification.GetListFromJson(RawInput);
         }
     }
 }

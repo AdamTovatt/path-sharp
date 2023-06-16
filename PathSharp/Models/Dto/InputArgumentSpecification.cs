@@ -26,5 +26,10 @@ namespace PathSharp.Models.Dto
         {
             return JsonSerializer.Deserialize<InputArgumentSpecification>(json);
         }
+
+        public static List<InputArgumentSpecification>? GetListFromJson(string json)
+        {
+            return JsonSerializer.Deserialize<List<InputArgumentSpecification>>(json);
+        }
     }
 }

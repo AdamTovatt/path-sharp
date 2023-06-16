@@ -107,6 +107,39 @@ namespace PathSharpTests
         }
 
         [TestMethod]
+        public async Task GetSingleRelease()
+        {
+            Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
+            Assert.IsNotNull(secrets.OrchestratorAddress, "Secrets are missing orchestratorAddress");
+            Assert.IsNotNull(secrets.ClientSecret, "Secrets are missing clientSecret");
+            Assert.IsNotNull(secrets.ClientId, "Secrets are missing clientId");
+            Assert.IsNotNull(secrets.OrganizationUnitId, "Secrets are missing organizationUnitId");
+
+            if (!secrets.ShouldTestAgainstApi) // only run this test if we should test against the api
+                return;
+
+            Assert.IsNotNull(client, "Client was null when testing, this should not be happening");
+
+            if (!client.IsAuthorized)
+                await client.AuthorizeAsync(secrets.ClientSecret, secrets.ClientId, PathClient.DefaultScope);
+
+            ODataParameters parameters = new ODataParameters();
+            parameters.AddFilterToken("Name", "BotTest");
+
+            List<Release>? releases = await client.GetReleasesAsync(secrets.OrganizationUnitId, parameters);
+
+            Assert.IsNotNull(releases);
+            Assert.IsTrue(releases.Count > 0);
+
+            Release release = releases[0];
+
+            Assert.IsNotNull(release);
+            Assert.IsNotNull(release.Arguments);
+            Assert.IsNotNull(release.Arguments.Input);
+            Assert.IsTrue(release.Arguments.Input.Count > 0);
+        }
+
+        [TestMethod]
         public async Task GetReleases()
         {
             Assert.IsNotNull(secrets, "Secrets have been read the wrong way");
