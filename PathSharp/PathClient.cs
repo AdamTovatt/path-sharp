@@ -147,7 +147,7 @@ namespace PathSharp
         /// <param name="parameters">The optional parameters for when getting the job</param>
         /// <returns></returns>
         /// <exception cref="PathApiException"></exception>
-        public async Task<Job?> GetJobAsync(long id, GetJobParameters? parameters = null)
+        public async Task<Job?> GetJobAsync(long id, ODataParameters? parameters = null)
         {
             HttpRequestMessage requestMessage = GetAuthorizedRequestMessage(HttpMethod.Get, RequestAddress.Jobs.GetById, parameter: id, queryParameters: parameters);
             HttpResponseMessage responseMessage = await httpClient.SendAsync(requestMessage);
