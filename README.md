@@ -1,5 +1,5 @@
 # Path Sharp
-PathSharp is a C# library that provides bindings for the UiPath Orchestrator Web API. It allows you to interact with the UiPath Orchestrator and perform various operations such as authorizing the client, starting jobs, getting job details, and more.
+PathSharp is a C# library that provides bindings for the UiPath Orchestrator Web API. PathSharp allows you to interact with the UiPath Orchestrator and perform various operations such as authorizing the client, starting jobs, getting job details, and more.
 
 ### Installation
 To use PathSharp in your C# project, you can install it via NuGet Package Manager. Run the following command in the NuGet Package Manager Console:
